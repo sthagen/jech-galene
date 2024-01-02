@@ -1,9 +1,13 @@
 package webserver
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/pion/webrtc/v3"
+
+	"github.com/jech/galene/group"
 )
 
 func TestParseGroupName(t *testing.T) {
@@ -124,6 +128,54 @@ func TestFormatICEServer(t *testing.T) {
 				t.Errorf("Got %v, expected %v", v, sv.v)
 			}
 		})
+	}
+}
+
+func TestMatchAdmin(t *testing.T) {
+	d := t.TempDir()
+	group.DataDirectory = d
+
+	filename := filepath.Join(d, "config.json")
+	f, err := os.Create(filename)
+	if err != nil {
+		t.Fatalf("Create %v: %v", filename, err)
+	}
+	f.Write([]byte(`{
+	    "users": {
+		"root": {"password": "pwd", "permissions": "admin"},
+		"notroot": {"password": "pwd"}
+	    }
+	}`))
+	f.Close()
+
+	ok, err := adminMatch("jch", "pwd")
+	if ok || err != nil {
+		t.Errorf("jch: %v %v", ok, err)
+	}
+
+	ok, err = adminMatch("root", "pwd")
+	if !ok || err != nil {
+		t.Errorf("root: %v %v", ok, err)
+	}
+
+	ok, err = adminMatch("root", "notpwd")
+	if ok || err != nil {
+		t.Errorf("root: %v %v", ok, err)
+	}
+
+	ok, err = adminMatch("root", "")
+	if ok || err != nil {
+		t.Errorf("root: %v %v", ok, err)
+	}
+
+	ok, err = adminMatch("notroot", "pwd")
+	if ok || err != nil {
+		t.Errorf("notroot: %v %v", ok, err)
+	}
+
+	ok, err = adminMatch("notroot", "notpwd")
+	if ok || err != nil {
+		t.Errorf("notroot: %v %v", ok, err)
 	}
 }
 
