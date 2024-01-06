@@ -28,6 +28,7 @@ var UDPMin, UDPMax uint16
 
 var ErrNotAuthorised = errors.New("not authorised")
 var ErrDuplicateUsername = errors.New("this username is taken")
+var ErrTagMismatch = errors.New("tag mismatch")
 
 type UserError string
 
