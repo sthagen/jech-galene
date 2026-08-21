@@ -33,7 +33,7 @@ async function start(url) {
 /**
  * Display the connection status.
  *
- * @parm {string} status
+ * @param {string} status
  */
 function displayStatus(status) {
     let c = document.getElementById('status');
@@ -43,8 +43,8 @@ function displayStatus(status) {
 /**
  * Connect to the server.
  *
- * @parm {Object} status
- * @parm {string} token
+ * @param {Object} status
+ * @param {string} token
  */
 function serverConnect(status, token) {
     // create the connection to the server
@@ -73,8 +73,8 @@ function serverConnect(status, token) {
  * Called whenever we receive a chat message.
  *
  * @this {ServerConnection}
- * @parm {string} username
- * @parm {string} message
+ * @param {string} username
+ * @param {string} message
  */
 function onChat(id, dest, username, time, privileged, history, kind, message) {
     let p = document.createElement('p');
@@ -87,9 +87,9 @@ function onChat(id, dest, username, time, privileged, history, kind, message) {
  * Called whenever we receive a user message.
  *
  * @this {ServerConnection}
- * @parm {string} username
- * @parm {string} message
- * @parm {string} kind
+ * @param {string} username
+ * @param {unknown} message
+ * @param {string} kind
  */
 function onUserMessage(id, dest, username, time, privileged, kind, error, message) {
     switch(kind) {
@@ -117,7 +117,7 @@ function onUserMessage(id, dest, username, time, privileged, kind, error, messag
 /**
  * Find the camera stream, if any.
  *
- * @parm {string} conn
+ * @param {ServerConnection} conn
  * @returns {Stream}
  */
 function cameraStream(conn) {
@@ -132,8 +132,8 @@ function cameraStream(conn) {
 /**
  * Enable or disable the show/hide button.
  *
- * @parm{ServerConnection} conn
- * @parm{boolean} enable
+ * @param{ServerConnection} conn
+ * @param{boolean} enable
  */
 function enableShow(conn, enable) {
     let b = /** @type{HTMLButtonElement} */(document.getElementById('show'));
@@ -156,8 +156,8 @@ function enableShow(conn, enable) {
  * Called when we join or leave a group.
  *
  * @this {ServerConnection}
- * @parm {string} kind
- * @parm {string} message}
+ * @param {string} kind
+ * @param {string} message}
  */
 async function onJoined(kind, group, perms, status, data, error, message) {
     switch(kind) {
@@ -194,7 +194,7 @@ async function onJoined(kind, group, perms, status, data, error, message) {
  * in order to avoid having a global hash table that maps ids to video
  * elements.
  *
- * @parm {string} id
+ * @param {string} id
  * @returns {HTMLVideoElement}
  */
 function makeVideoElement(id) {
@@ -208,7 +208,7 @@ function makeVideoElement(id) {
 /**
  * Find the video element that shows a given id.
  *
- * @parm {string} id
+ * @param {string} id
  * @returns {HTMLVideoElement}
  */
 function getVideoElement(id) {
@@ -219,7 +219,7 @@ function getVideoElement(id) {
 /**
  * Enable the camera and broadcast yourself to the group.
  *
- * @parm {ServerConnection} conn
+ * @param {ServerConnection} conn
  */
 async function showCamera(conn) {
     let ms = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
@@ -238,7 +238,7 @@ async function showCamera(conn) {
     function addTrack(t) {
         t.oneneded = function(e) {
             ms.onaddtrack = null;
-            s.onremovetrack = null;
+            ms.onremovetrack = null;
             s.close();
         }
         s.pc.addTransceiver(t, {
@@ -248,7 +248,7 @@ async function showCamera(conn) {
     }
 
     // Make sure all future tracks are added.
-    s.onaddtrack = function(e) {
+    ms.onaddtrack = function(e) {
         addTrack(e.track);
     }
     // Add any existing tracks.
@@ -263,8 +263,8 @@ async function showCamera(conn) {
 /**
  * Stop broadcasting.
  *
- * @parm {ServerConnection} conn
- * @parm {Stream} s
+ * @param {ServerConnection} conn
+ * @param {Stream} s
  */
 async function hide(conn, s) {
     s.stream.getTracks().forEach(t => t.stop());
@@ -275,7 +275,7 @@ async function hide(conn, s) {
  * Called when the server pushes a stream.
  *
  * @this {ServerConnection}
- * @parm {Stream} c
+ * @param {Stream} s
  */
 function onDownStream(s) {
     s.onclose = function(replace) {
@@ -297,7 +297,7 @@ function onDownStream(s) {
 /**
  * Display an error message.
  *
- * @parm {string} message
+ * @param {string} message
  */
 function displayError(message) {
     document.getElementById('error').textContent = message;
